@@ -2,7 +2,7 @@
 **/__pycache__
 
 ## 도스관련 파일
-## **/.DS_Store
+**/.DS_Store
 
 ## Django 환경파일
 my_settings.py
