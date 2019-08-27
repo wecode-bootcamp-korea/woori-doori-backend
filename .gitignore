@@ -1,0 +1,13 @@
+## cach관련 파일
+**/__pycache__
+
+## 도스관련 파일
+**/.DS_Store
+
+## Django 환경파일
+my_settings.py
+
+## swp파일
+*.swp
+
+
