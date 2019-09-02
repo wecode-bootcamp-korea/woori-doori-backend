@@ -14,11 +14,14 @@ class SignUp(View):
     def post(self,request):
         data = json.loads(request.body)
         user_id = data["user_id"]
+        email = data["email"]
         password = data["password"]
         ch_password = data["ch_password"]
         
         if User.objects.filter(user_id = user_id).exists():
             return JsonResponse({"message":"EXISTED_ID"}, status = 401)
+        elif User.objects.filter(email = email).exists():
+            return JsonResponse({"message":"EXISTED_EMAIL"}, status = 401)
         elif password != ch_password:
             return JsonResponse({"message":"MISMATCHED_PASSWORD"}, status = 401)
         else:
@@ -57,4 +60,4 @@ class LogIn(View):
 
             return JsonResponse({"access_token":encoded_token.decode('utf-8')}, status = 200)
         else:
-            return JsonResponse({"message":"WRONG_PASSWORD"}, status = 401)
+            return JsonResponse({"message":"WRONG_PASSWORD"}, status = 401)       
