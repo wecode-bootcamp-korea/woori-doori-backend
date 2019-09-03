@@ -1,24 +1,25 @@
-from django.http import JsonResponse
-from .models import *
 from WooriDooriBackEnd import settings
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Users
 import jwt
+import json
 
+def login_validation(func):
+	def wrapper(self, request, *args, **kwargs):
+		if 'Authorization' not in request.headers:
+			return JsonResponse({'message':'NOT_ALLOWED'}, status = 401)
+		
+		access_token = request.headers['Authorization']
 
-def user_auth_deco(func):
-    def wrapper(self, request, *args, **kwargs):
-        
-        access_token = request.headers["Authorization"]
-        algorithm = 'HS256'
+		try:
+			user_data = jwt.decode(access_token, settings.SECRET_KEY, algorithm='HS256')
+			user = Users.objects.get(id = user_data['id'])
+			request.user = user
+		except jwt.DecodeError:
+			return JsonResponse({'message':'INVALID_TOKEN'}, status = 401)
+		except ObjectDoesNotExist:
+			return JsonResponse({'message':'USER_NOT_EXISTS'}, status = 401)
+		return func(self, request, *args, **kwargs)
 
-        try:
-            decoded_token = jwt.decode(access_token, settings.SECRET_KEY, algorithm)
-        except jwt.DecodeError:
-            return JsonResponse({"message":"INVALID_TOKEN"}, status = 401)
-        else:
-            if User.objects.filter(id = decoded_token["user_pk"]).exists():
-                request.user_info = User.objects.get(id = decoded_token["user_pk"])
-                return func(self, request, *args, **kwargs)
-            else:
-                return JsonResponse({"message":"INVALID_USER"}, status = 401)
-            
-        return wrapper
+	return wrapper
