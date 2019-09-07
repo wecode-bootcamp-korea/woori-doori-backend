@@ -8,7 +8,6 @@ import json
 import jwt
 import datetime
 import requests
-import pdb
 
 
 class SignupView(View):
@@ -50,7 +49,7 @@ class SignupView(View):
 class SigninView(View):
     def post(self, request):
         user_data = json.loads(request.body)
-
+        ONE_DAY = 60 * 60 * 24
         if user_data.get('user_id') is None or len(user_data['user_id']) == 0:
             return JsonResponse({'message' : 'FILL_ID'}, status = 401)
 
@@ -60,13 +59,13 @@ class SigninView(View):
         try:
             user_info = User.objects.get(user_id = user_data['user_id'])
 
-        except ObjectDoesNotExist:
+        except User.NotExist:
             return JsonResponse({'message' : 'USER_NOT_EXIST'}, status = 401)
 
         if bcrypt.checkpw(user_data['password'].encode('utf-8'), user_info.password.encode('utf-8')):
             payload = {
                 'id': user_info.id,
-                'exp': datetime.datetime.now() + datetime.timedelta(seconds = 60 * 60 * 24),
+                'exp': datetime.datetime.now() + datetime.timedelta(seconds = ONE_DAY),
             }
 
             encoded_key = settings.SECRET_KEY
@@ -82,16 +81,16 @@ class GoogleAuthView(View):
         url = 'https://oauth2.googleapis.com/tokeninfo?id_token='
         response = requests.get(url+access_token)
         user = response.json()
-
         encoded_key = settings.SECRET_KEY
         algorithm = 'HS256'
+        ONE_DAY = 60 * 60 * 24
 
         if User.objects.filter(social_user_id = user['sub']).exists():
             user_info = User.objects.get(social_user_id = user['sub'])
             payload = {
                 'id' : user_info.id,
                 'google_id' : user['sub'],
-                'exp': datetime.datetime.now() + datetime.timedelta(seconds = 60 * 60 * 24),
+                'exp': datetime.datetime.now() + datetime.timedelta(seconds = ONE_DAY),
                 }
             token = jwt.encode(payload, encoded_key, algorithm)
             return JsonResponse({'access_token' : token.decode('UTF-8')}, status = 200)
@@ -106,7 +105,43 @@ class GoogleAuthView(View):
             payload = {
                 'id' : User.objects.get(social_user_id = user['sub']).id,
                 'google_id' : user['sub'],
-                'exp': datetime.datetime.now() + datetime.timedelta(seconds = 60 * 60 * 24),
+                'exp': datetime.datetime.now() + datetime.timedelta(seconds = ONE_DAY),
+                }
+            token = jwt.encode(payload, encoded_key, algorithm)
+            return JsonResponse({'access_token' : token.decode('UTF-8')}, status = 200)
+
+class KakaoAuthView(View):
+    def get(self, request):
+        access_token = request.headers["Authorization"]
+        headers = {'Authorization' : f'Bearer {access_token}'}
+        url = "https://kapi.kakao.com/v1/user/me"
+        response = requests.request("POST", url, headers = headers)
+        user = response.json()
+        encoded_key = settings.SECRET_KEY
+        algorithm = 'HS256'
+        ONE_DAY = 60 * 60 * 24
+
+        if User.objects.filter(social_user_id = user['id']).exists():
+            user_info = User.objects.get(social_user_id = user['id'])
+            payload = {
+                'id' : user_info.id,
+                'kakao_id' : user['id'],
+                'exp': datetime.datetime.now() + datetime.timedelta(seconds = ONE_DAY),
+                }
+            token = jwt.encode(payload, encoded_key, algorithm)
+            return JsonResponse({'access_token' : token.decode('UTF-8')}, status = 200)
+
+        else:
+            new_user_info = User(
+                    social_user_id = user['id'],
+                    social = SocialPlatform.objects.get(platform = 'kakao')
+                    )
+            new_user_info.save()
+            
+            payload = {
+                'id' : User.objects.get(social_user_id = user['id']).id,
+                'kakao_id' : user['id'],
+                'exp': datetime.datetime.now() + datetime.timedelta(seconds = ONE_DAY),
                 }
             token = jwt.encode(payload, encoded_key, algorithm)
             return JsonResponse({'access_token' : token.decode('UTF-8')}, status = 200)
