@@ -10,4 +10,8 @@ my_settings.py
 ## swp파일
 *.swp
 
+##test용
+users
+
+news_comments
 
