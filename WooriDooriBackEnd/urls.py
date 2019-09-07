@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from news_comments.views import NewsCommentsView
 
 urlpatterns = [
+    path('recipe/', include('recipe.urls')),
     path('news',include('news.urls')),
-	path('news_comments',include('news_comments.urls')),
+	  path('news_comments',include('news_comments.urls')),
 ]
