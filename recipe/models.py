@@ -27,6 +27,7 @@ class CategoryItem(models.Model):
 class RecipeItem(models.Model):
     recipe_no = models.IntegerField()
     title = models.CharField(max_length=500)
+    name = models.CharField(max_length=500)
     method = models.CharField(max_length=2000)
     image = models.URLField(max_length=300, null=True)
     categoryItem = models.ForeignKey(CategoryItem, on_delete=models.CASCADE)
