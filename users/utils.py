@@ -5,20 +5,19 @@ from .models import Users
 import jwt
 import json
 
-def login_validation(func):
+def validate_login(func):
 	def wrapper(self, request, *args, **kwargs):
 		if 'Authorization' not in request.headers:
 			return JsonResponse({'message':'NOT_ALLOWED'}, status = 401)
-		
 		access_token = request.headers['Authorization']
-
+		
 		try:
 			user_data = jwt.decode(access_token, settings.SECRET_KEY, algorithm='HS256')
 			user = Users.objects.get(id = user_data['id'])
 			request.user = user
-		except jwt.DecodeError:
+		except jwt.DecodeError as e:
 			return JsonResponse({'message':'INVALID_TOKEN'}, status = 401)
-		except ObjectDoesNotExist:
+		except ObjectDoesNotExist as e:
 			return JsonResponse({'message':'USER_NOT_EXISTS'}, status = 401)
 		return func(self, request, *args, **kwargs)
 
