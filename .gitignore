@@ -10,7 +10,8 @@ my_settings.py
 ## swp파일
 *.swp
 
-# comment test용 user app
+##test용
 users
 
+news_comments
 

@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
 	'news',
-	'comments',
-	'users',
+	'news_comments',
 ]
 
 MIDDLEWARE = [
