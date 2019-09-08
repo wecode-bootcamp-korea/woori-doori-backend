@@ -20,7 +20,7 @@ class CategoryView(View):
                             ))
             return JsonResponse({"result" : categoryList}, status=200)
         except CategoryItem.DoesNotExist:
-            return JsonResponse({"message" : RETURN_MESSAGE["DOES_NOT_EXIST"]}, status=204)
+            return JsonResponse({"message" : RETURN_MESSAGE["DOES_NOT_EXIST"]}, status=404)
    
 class RecipeView(View):
 
@@ -49,5 +49,5 @@ class RecipeView(View):
                             "result": result}, status=200) 
         except CategoryItem.DoesNotExist:
             return JsonResponse({
-                            "message": RETURN_MESSAGE["DOES_NOT_EXIST"]}, status=204)
+                            "message": RETURN_MESSAGE["DOES_NOT_EXIST"]}, status=404)
 

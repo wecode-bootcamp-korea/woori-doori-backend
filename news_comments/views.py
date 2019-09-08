@@ -9,12 +9,9 @@ import json
 class NewsCommentsView(View):
 
 	def get(self, request, news_id):
-#if NewsComments.objects.filter(id = news_id).exists() is False:
-#			return JsonResponse({'message':'COMMENT_NOT_EXIST'}, safe = False, status = 401)
-#		elif NewsComments.objects.get(id = news_id).is_deleted is True:
-#			return JsonResponse({'message':'COMMENT_DELETED'}, safe = False, status = 405)
+		if NewsComments.objects.filter(news_id = news_id, is_deleted = False).exists() is False:
+			return JsonResponse({'message':'COMMENT_NOT_EXIST'}, safe = False, status = 401)
 		
-		print(NewsComments.objects.select_related('news'))
 		comment_data = NewsComments.objects.select_related('news').filter(news = news_id,is_deleted = False).values()
 			
 		data = [{
@@ -38,7 +35,7 @@ class NewsCommentsView(View):
 			login_user = User.objects.get(pk = data['user_id'])
 			news_page  = News.objects.get(pk = news_id)
 
-		except Users.DoesNotExist:
+		except User.DoesNotExist:
 			return JsonResponse({'message':'INVALID_INPUT'}, status = 401)
 		except News.DoesNotExist:
 			return JsonResponse({'message':'NEWS_NOT_EXIST'}, status = 401)

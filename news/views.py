@@ -27,6 +27,10 @@ class NewsView(View):
 
 	def get(self, request):
 		offset = request.GET.get('offset','0')
+		
+		if offset is None:
+			return JsonResponse({'message':'PAGE_NOT_FOUND'}, status = 404)
+		
 		raw_data = News.objects.select_related('tag').values()
 		
 		news_data = [{
