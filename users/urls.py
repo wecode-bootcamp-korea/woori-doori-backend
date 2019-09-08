@@ -6,4 +6,5 @@ urlpatterns = [
     path('/signup', SignupView.as_view()),
     path('/signin', SigninView.as_view()),
     path('/google', GoogleAuthView.as_view()),
+    path('/kakao', KakaoAuthView.as_view()),
 ]
