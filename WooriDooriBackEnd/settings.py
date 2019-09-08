@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'recipe',
 	  'news',
-	  'news_comments',
+#	  'news_comments',
 ]
 
 MIDDLEWARE = [

@@ -19,5 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('recipe/', include('recipe.urls')),
     path('news',include('news.urls')),
-	  path('news_comments',include('news_comments.urls')),
+#path('news_comments',include('news_comments.urls')),
 ]
