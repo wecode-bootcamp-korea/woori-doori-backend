@@ -1,11 +1,11 @@
 from WooriDooriBackEnd import settings
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Users
+from .models import User
 import jwt
 import json
 
-def login_validation(func):
+def validate_login(func):
 	def wrapper(self, request, *args, **kwargs):
 		if 'Authorization' not in request.headers:
 			return JsonResponse({'message':'NOT_ALLOWED'}, status = 401)

@@ -16,8 +16,8 @@ class User(models.Model):
     profile        = models.CharField(max_length = 300, null = True)
     created_at     = models.DateTimeField(auto_now_add = True)
     updated_at     = models.DateTimeField(auto_now = True)
-    social         = models.ForeignKey(SocialPlatform, on_delete = models.CASCADE, max_length = 20, blank = True, default = 1)
-    social_user_id = models.CharField(max_length = 50, blank = True)
+    social         = models.ForeignKey(SocialPlatform, on_delete = models.CASCADE, max_length = 20, null = True, default = 1)
+    social_user_id = models.CharField(max_length = 50, null = True)
 
     class Meta:
         db_table = 'user'
