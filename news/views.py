@@ -26,20 +26,27 @@ class TagView(View):
 class NewsView(View):
 
 	def get(self, request):
-		offset = request.GET.get('offset','0')
-		
-		if offset is None:
+		offset = int(request.GET.get('offset','0'))
+		tag_num = int(request.GET.get('tag_num','0'))
+				
+		if offset >= len(News.objects.values()) or tag_num >= len(Tags.objects.values()):
 			return JsonResponse({'message':'PAGE_NOT_FOUND'}, status = 404)
 		
-		raw_data = News.objects.select_related('tag').values()
+		raw_data = News.objects.select_related('tag')
 		
+		if tag_num is '0': 
+			raw_data = raw_data.values()
+		else:
+			raw_data = raw_data.filter(tag_id = tag_num).values()
+			
 		news_data = [{
 					  'id'        : data['id'],
 					  'title'     : data['title'],
 					  'tag_id'    : data['tag_id'],
 					  'tag'       : Tags.objects.get(pk = data['tag_id']).tag,
 					  'image_url' : data['image_url'],
-					  'content'   : data['content'], } for data in raw_data][int(offset):int(offset)+10]
+					  'content'   : data['content'], }
+					  for data in raw_data][offset:offset+10]
 		response = [{'total' : len(raw_data), 'news_data': news_data }]
 		return JsonResponse(response, safe = False, status = 200)
 		
