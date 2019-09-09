@@ -34,7 +34,7 @@ class NewsView(View):
 		
 		raw_data = News.objects.select_related('tag')
 		
-		if tag_num is '0': 
+		if tag_num is 0: 
 			raw_data = raw_data.values()
 		else:
 			raw_data = raw_data.filter(tag_id = tag_num).values()
