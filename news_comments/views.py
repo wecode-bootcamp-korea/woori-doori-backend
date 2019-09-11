@@ -23,14 +23,14 @@ class NewsCommentsView(View):
 				'image_url' : item.get('image_url',''),
 				'content'   : item['content'],
 				'updated_at': item['updated_at'],	
-				} for item in comment_data]
+				} for item in comment_data.order_by('created_at').reverse()][:10]
 		
 		return JsonResponse({'total':len(comment_data), 'data' : data }, safe = False, status = 200)
 	
 	@validate_login
 	def post(self, request, news_id):
 		data = json.loads(request.body)
-		
+
 		try:
 			login_user = User.objects.get(pk = data['user_id'])
 			news_page  = News.objects.get(pk = news_id)
@@ -49,7 +49,7 @@ class NewsCommentsView(View):
 				content   = data['content'],
 				).save()
 	
-		return HttpResponse(status = 200)
+		return JsonResponse({'message':'COMPELETE'},status = 200)
 
 class UpdateCommentsView(View):
 	
