@@ -22,3 +22,6 @@ class User(models.Model):
 
     class Meta:
         db_table = 'user'
+
+    def test(self):
+        return "Hello Wolrd!"
