@@ -2,7 +2,6 @@ from django.db import models
 
 
 class SocialPlatform(models.Model):
-    
 	platform = models.CharField(max_length = 20, default = 0)
 	
 	class Meta:
@@ -13,15 +12,12 @@ class User(models.Model):
     name           = models.CharField(max_length = 15, null = True)
     password       = models.CharField(max_length = 200, null = True)
     email          = models.EmailField(max_length = 50, unique = True,  null = True)
-    photo          = models.URLField(max_length = 200, null = True)
+    profile_img    = models.URLField(max_length = 200, null = True)
     profile        = models.CharField(max_length = 300, null = True)
-    created_at     = models.DateTimeField(auto_now_add = True)
-    updated_at     = models.DateTimeField(auto_now = True)
     social         = models.ForeignKey(SocialPlatform, on_delete = models.SET_NULL, null = True, blank = True)
     social_user_id = models.CharField(max_length = 50, null = True)
+    created_at     = models.DateTimeField(auto_now_add = True)
+    updated_at     = models.DateTimeField(auto_now = True)
 
     class Meta:
-        db_table = 'user'
-
-    def test(self):
-        return "Hello Wolrd!"
+        db_table = 'users'
